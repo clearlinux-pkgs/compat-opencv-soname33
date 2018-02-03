@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : compat-opencv-soname33
 Version  : 3.3.1
-Release  : 42
+Release  : 43
 URL      : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Source0  : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Summary  : Open Source Computer Vision Library
@@ -128,7 +128,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1517623031
+export SOURCE_DATE_EPOCH=1517631176
 mkdir clr-build
 pushd clr-build
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong "
@@ -151,7 +151,7 @@ make  %{?_smp_mflags}  || :
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1517623031
+export SOURCE_DATE_EPOCH=1517631176
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/lib64/haswell/avx512_1
 pushd clr-build-avx2
@@ -165,6 +165,7 @@ popd
 ## make_install_append content
 mkdir -p %{buildroot}/usr/lib
 mv %{buildroot}/usr/lib64/python*  %{buildroot}/usr/lib
+rm -fr %{buildroot}/usr/share/OpenCV/samples/python/__pycache__
 ## make_install_append end
 
 %files
