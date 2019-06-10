@@ -5,26 +5,29 @@
 %define keepstatic 1
 Name     : compat-opencv-soname33
 Version  : 3.3.1
-Release  : 57
+Release  : 58
 URL      : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Source0  : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Summary  : Open Source Computer Vision Library
 Group    : Development/Tools
 License  : Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear GPL-2.0 JasPer-2.0 LGPL-2.1 Libpng libtiff
-Requires: compat-opencv-soname33-bin
-Requires: compat-opencv-soname33-legacypython
-Requires: compat-opencv-soname33-python3
-Requires: compat-opencv-soname33-lib
-Requires: compat-opencv-soname33-data
-Requires: compat-opencv-soname33-python
+Requires: compat-opencv-soname33-bin = %{version}-%{release}
+Requires: compat-opencv-soname33-data = %{version}-%{release}
+Requires: compat-opencv-soname33-lib = %{version}-%{release}
+Requires: compat-opencv-soname33-license = %{version}-%{release}
+Requires: compat-opencv-soname33-python = %{version}-%{release}
+Requires: compat-opencv-soname33-python3 = %{version}-%{release}
 BuildRequires : beignet-dev
+BuildRequires : buildreq-cmake
 BuildRequires : ccache
 BuildRequires : cmake
 BuildRequires : doxygen
 BuildRequires : eigen-dev
+BuildRequires : gdal-dev
 BuildRequires : glib-dev
 BuildRequires : gstreamer-dev
 BuildRequires : gtk3-dev
+BuildRequires : libX11-dev libICE-dev libSM-dev libXau-dev libXcomposite-dev libXcursor-dev libXdamage-dev libXdmcp-dev libXext-dev libXfixes-dev libXft-dev libXi-dev libXinerama-dev libXi-dev libXmu-dev libXpm-dev libXrandr-dev libXrender-dev libXres-dev libXScrnSaver-dev libXt-dev libXtst-dev libXv-dev libXxf86misc-dev libXxf86vm-dev
 BuildRequires : libjpeg-turbo-dev
 BuildRequires : libva-dev
 BuildRequires : libva-intel-driver
@@ -33,14 +36,23 @@ BuildRequires : mesa-dev
 BuildRequires : numpy
 BuildRequires : ocl-icd-dev
 BuildRequires : openblas
+BuildRequires : openjdk9-dev
+BuildRequires : pkg-config
+BuildRequires : pkgconfig(clp)
 BuildRequires : pkgconfig(gstreamer-video-1.0)
 BuildRequires : pkgconfig(libpng)
+BuildRequires : protobuf-dev
 BuildRequires : python-dev
 BuildRequires : python3-dev
 BuildRequires : tbb-dev
 BuildRequires : v4l-utils-dev
 BuildRequires : zlib-dev
 Patch1: restrict.patch
+Patch2: CVE-2017-17760.patch
+Patch3: CVE-2017-18009.patch
+Patch4: CVE-2018-5268.patch
+Patch5: CVE-2018-5269-1.patch
+Patch6: CVE-2018-5269-2.patch
 
 %description
 A demo of the Java wrapper for OpenCV with two examples:
@@ -53,7 +65,8 @@ Please feel free to contribute code examples in Scala or Java, or any JVM langua
 %package bin
 Summary: bin components for the compat-opencv-soname33 package.
 Group: Binaries
-Requires: compat-opencv-soname33-data
+Requires: compat-opencv-soname33-data = %{version}-%{release}
+Requires: compat-opencv-soname33-license = %{version}-%{release}
 
 %description bin
 bin components for the compat-opencv-soname33 package.
@@ -70,38 +83,38 @@ data components for the compat-opencv-soname33 package.
 %package dev
 Summary: dev components for the compat-opencv-soname33 package.
 Group: Development
-Requires: compat-opencv-soname33-lib
-Requires: compat-opencv-soname33-bin
-Requires: compat-opencv-soname33-data
-Provides: compat-opencv-soname33-devel
+Requires: compat-opencv-soname33-lib = %{version}-%{release}
+Requires: compat-opencv-soname33-bin = %{version}-%{release}
+Requires: compat-opencv-soname33-data = %{version}-%{release}
+Provides: compat-opencv-soname33-devel = %{version}-%{release}
+Requires: compat-opencv-soname33 = %{version}-%{release}
 
 %description dev
 dev components for the compat-opencv-soname33 package.
 
 
-%package legacypython
-Summary: legacypython components for the compat-opencv-soname33 package.
-Group: Default
-Requires: python-core
-
-%description legacypython
-legacypython components for the compat-opencv-soname33 package.
-
-
 %package lib
 Summary: lib components for the compat-opencv-soname33 package.
 Group: Libraries
-Requires: compat-opencv-soname33-data
+Requires: compat-opencv-soname33-data = %{version}-%{release}
+Requires: compat-opencv-soname33-license = %{version}-%{release}
 
 %description lib
 lib components for the compat-opencv-soname33 package.
 
 
+%package license
+Summary: license components for the compat-opencv-soname33 package.
+Group: Default
+
+%description license
+license components for the compat-opencv-soname33 package.
+
+
 %package python
 Summary: python components for the compat-opencv-soname33 package.
 Group: Default
-Requires: compat-opencv-soname33-legacypython
-Requires: compat-opencv-soname33-python3
+Requires: compat-opencv-soname33-python3 = %{version}-%{release}
 
 %description python
 python components for the compat-opencv-soname33 package.
@@ -119,54 +132,74 @@ python3 components for the compat-opencv-soname33 package.
 %prep
 %setup -q -n opencv-3.3.1
 %patch1 -p1
-pushd ..
-cp -a opencv-3.3.1 buildavx2
-popd
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1517703348
-mkdir clr-build
+export SOURCE_DATE_EPOCH=1560207720
+mkdir -p clr-build
 pushd clr-build
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong "
-cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS:BOOL=ON -DLIB_INSTALL_DIR:PATH=/usr/lib64 -DCMAKE_AR=/usr/bin/gcc-ar -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_RANLIB=/usr/bin/gcc-ranlib -DWITH_FFMPEG=OFF -DWITH_1394=OFF -DWITH_GSTREAMER=OFF -DWITH_IPP=OFF -DWITH_JASPER=OFF -DWITH_WEBP=OFF -DWITH_OPENEXR=OFF -DWITH_TIFF=OFF -DENABLE_SSE42=ON -DCMAKE_LIBRARY_PATH=/lib64 -DWITH_TBB=on -DWITH_OPENMP=ON -DWITH_VA=ON -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo -DWITH_GSTREAMER=1 -DINSTALL_PYTHON_EXAMPLES=1  -DCPU_DISPATCH=AVX,AVX2,AVX512
-make  %{?_smp_mflags}
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
+%cmake .. -DWITH_FFMPEG=OFF -DWITH_1394=OFF -DWITH_GSTREAMER=OFF -DWITH_IPP=OFF -DWITH_JASPER=OFF -DWITH_WEBP=OFF -DWITH_OPENEXR=OFF -DWITH_TIFF=OFF -DENABLE_SSE42=ON -DCMAKE_LIBRARY_PATH=/lib64 -DWITH_TBB=on -DWITH_OPENMP=ON -DWITH_VA=ON -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo -DWITH_GSTREAMER=1 -DINSTALL_PYTHON_EXAMPLES=1  -DCPU_DISPATCH=AVX,AVX2,AVX512
+make  %{?_smp_mflags} VERBOSE=1
 popd
-mkdir clr-build-avx2
+mkdir -p clr-build-avx2
 pushd clr-build-avx2
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell "
-export CFLAGS="$CFLAGS -march=haswell"
-export CXXFLAGS="$CXXFLAGS -march=haswell"
-cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS:BOOL=ON -DLIB_INSTALL_DIR:PATH=/usr/lib/haswell -DCMAKE_AR=/usr/bin/gcc-ar -DCMAKE_RANLIB=/usr/bin/gcc-ranlib -DWITH_FFMPEG=OFF -DWITH_1394=OFF -DWITH_GSTREAMER=OFF -DWITH_IPP=OFF -DWITH_JASPER=OFF -DWITH_WEBP=OFF -DWITH_OPENEXR=OFF -DWITH_TIFF=OFF -DENABLE_SSE42=ON -DCMAKE_LIBRARY_PATH=/lib64 -DWITH_TBB=on -DWITH_OPENMP=ON -DWITH_VA=ON -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo -DWITH_GSTREAMER=1 -DINSTALL_PYTHON_EXAMPLES=1  -DCPU_DISPATCH=AVX,AVX2,AVX512
-make  %{?_smp_mflags}  || :
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
+export CFLAGS="$CFLAGS -march=haswell -m64"
+export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
+%cmake .. -DWITH_FFMPEG=OFF -DWITH_1394=OFF -DWITH_GSTREAMER=OFF -DWITH_IPP=OFF -DWITH_JASPER=OFF -DWITH_WEBP=OFF -DWITH_OPENEXR=OFF -DWITH_TIFF=OFF -DENABLE_SSE42=ON -DCMAKE_LIBRARY_PATH=/lib64 -DWITH_TBB=on -DWITH_OPENMP=ON -DWITH_VA=ON -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo -DWITH_GSTREAMER=1 -DINSTALL_PYTHON_EXAMPLES=1  -DCPU_DISPATCH=AVX,AVX2,AVX512
+make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1517703348
+export SOURCE_DATE_EPOCH=1560207720
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/lib64/haswell/avx512_1
+mkdir -p %{buildroot}/usr/share/package-licenses/compat-opencv-soname33
+cp 3rdparty/cpufeatures/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_cpufeatures_LICENSE
+cp 3rdparty/ffmpeg/license.txt %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_ffmpeg_license.txt
+cp 3rdparty/ittnotify/src/ittnotify/LICENSE.BSD %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_ittnotify_src_ittnotify_LICENSE.BSD
+cp 3rdparty/ittnotify/src/ittnotify/LICENSE.GPL %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_ittnotify_src_ittnotify_LICENSE.GPL
+cp 3rdparty/libjasper/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_libjasper_LICENSE
+cp 3rdparty/libjasper/copyright %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_libjasper_copyright
+cp 3rdparty/libpng/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_libpng_LICENSE
+cp 3rdparty/libtiff/COPYRIGHT %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_libtiff_COPYRIGHT
+cp 3rdparty/openexr/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_openexr_LICENSE
+cp 3rdparty/protobuf/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_protobuf_LICENSE
+cp LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/LICENSE
+cp modules/dnn/src/torch/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/modules_dnn_src_torch_COPYRIGHT.txt
 pushd clr-build-avx2
-%make_install  || :
-mv %{buildroot}/usr/lib64/*so* %{buildroot}/usr/lib64/haswell/ || :
+%make_install_avx2  || :
 popd
-rm -f %{buildroot}/usr/bin/*
 pushd clr-build
 %make_install
 popd
-## make_install_append content
+## install_append content
 mkdir -p %{buildroot}/usr/lib
 mv %{buildroot}/usr/lib64/python*  %{buildroot}/usr/lib
 rm -fr %{buildroot}/usr/share/OpenCV/samples/
-## make_install_append end
+## install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -179,6 +212,12 @@ rm -fr %{buildroot}/usr/share/OpenCV/samples/
 %exclude /usr/bin/opencv_traincascade
 %exclude /usr/bin/opencv_version
 %exclude /usr/bin/opencv_visualisation
+/usr/bin/haswell/opencv_annotation
+/usr/bin/haswell/opencv_createsamples
+/usr/bin/haswell/opencv_interactive-calibration
+/usr/bin/haswell/opencv_traincascade
+/usr/bin/haswell/opencv_version
+/usr/bin/haswell/opencv_visualisation
 
 %files data
 %defattr(-,root,root,-)
@@ -464,10 +503,6 @@ rm -fr %{buildroot}/usr/share/OpenCV/samples/
 %exclude /usr/lib64/libopencv_videostab.so
 %exclude /usr/lib64/pkgconfig/opencv.pc
 
-%files legacypython
-%defattr(-,root,root,-)
-%exclude /usr/lib/python2.7/site-packages/cv2.so
-
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/haswell/libopencv_calib3d.so.3.3
@@ -539,9 +574,24 @@ rm -fr %{buildroot}/usr/share/OpenCV/samples/
 /usr/lib64/libopencv_videostab.so.3.3
 /usr/lib64/libopencv_videostab.so.3.3.1
 
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_cpufeatures_LICENSE
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_ffmpeg_license.txt
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_ittnotify_src_ittnotify_LICENSE.BSD
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_ittnotify_src_ittnotify_LICENSE.GPL
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_libjasper_LICENSE
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_libjasper_copyright
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_libpng_LICENSE
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_libtiff_COPYRIGHT
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_openexr_LICENSE
+/usr/share/package-licenses/compat-opencv-soname33/3rdparty_protobuf_LICENSE
+/usr/share/package-licenses/compat-opencv-soname33/LICENSE
+/usr/share/package-licenses/compat-opencv-soname33/modules_dnn_src_torch_COPYRIGHT.txt
+
 %files python
 %defattr(-,root,root,-)
 
 %files python3
 %defattr(-,root,root,-)
-%exclude /usr/lib/python3.6/site-packages/cv2.cpython-36m-x86_64-linux-gnu.so
+/usr/lib/python3*/*
