@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : compat-opencv-soname33
 Version  : 3.3.1
-Release  : 59
+Release  : 60
 URL      : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Source0  : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Summary  : Open Source Computer Vision Library
@@ -143,7 +143,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1560207720
+export SOURCE_DATE_EPOCH=1560218347
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -174,7 +174,7 @@ make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1560207720
+export SOURCE_DATE_EPOCH=1560218347
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-opencv-soname33
 cp 3rdparty/cpufeatures/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_cpufeatures_LICENSE
@@ -206,18 +206,18 @@ rm -fr %{buildroot}/usr/share/OpenCV/samples/
 
 %files bin
 %defattr(-,root,root,-)
+%exclude /usr/bin/haswell/opencv_annotation
+%exclude /usr/bin/haswell/opencv_interactive-calibration
+%exclude /usr/bin/haswell/opencv_version
+%exclude /usr/bin/haswell/opencv_visualisation
 %exclude /usr/bin/opencv_annotation
 %exclude /usr/bin/opencv_createsamples
 %exclude /usr/bin/opencv_interactive-calibration
 %exclude /usr/bin/opencv_traincascade
 %exclude /usr/bin/opencv_version
 %exclude /usr/bin/opencv_visualisation
-/usr/bin/haswell/opencv_annotation
 /usr/bin/haswell/opencv_createsamples
-/usr/bin/haswell/opencv_interactive-calibration
 /usr/bin/haswell/opencv_traincascade
-/usr/bin/haswell/opencv_version
-/usr/bin/haswell/opencv_visualisation
 
 %files data
 %defattr(-,root,root,-)
