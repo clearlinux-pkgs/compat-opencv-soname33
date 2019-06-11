@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : compat-opencv-soname33
 Version  : 3.3.1
-Release  : 60
+Release  : 61
 URL      : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Source0  : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Summary  : Open Source Computer Vision Library
@@ -143,7 +143,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1560218347
+export SOURCE_DATE_EPOCH=1560295247
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -174,7 +174,7 @@ make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1560218347
+export SOURCE_DATE_EPOCH=1560295247
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-opencv-soname33
 cp 3rdparty/cpufeatures/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_cpufeatures_LICENSE
@@ -594,4 +594,5 @@ rm -fr %{buildroot}/usr/share/OpenCV/samples/
 
 %files python3
 %defattr(-,root,root,-)
+%exclude /usr/lib/python3.7/site-packages/cv2.cpython-37m-x86_64-linux-gnu.so
 /usr/lib/python3*/*
