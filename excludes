@@ -4,6 +4,10 @@
 /usr/bin/opencv_traincascade
 /usr/bin/opencv_version
 /usr/bin/opencv_visualisation
+/usr/bin/haswell/opencv_version
+/usr/bin/haswell/opencv_interactive-calibration
+/usr/bin/haswell/opencv_visualisation
+/usr/bin/haswell/opencv_annotation
 /usr/share/OpenCV/OpenCVConfig-version.cmake
 /usr/share/OpenCV/OpenCVConfig.cmake
 /usr/share/OpenCV/OpenCVModules-releasewithdebinfo.cmake
