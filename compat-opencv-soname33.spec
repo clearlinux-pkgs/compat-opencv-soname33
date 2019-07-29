@@ -5,10 +5,10 @@
 %define keepstatic 1
 Name     : compat-opencv-soname33
 Version  : 3.3.1
-Release  : 62
+Release  : 63
 URL      : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Source0  : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
-Summary  : Open Source Computer Vision Library
+Summary  : Library for manipulating the WebP graphics format container
 Group    : Development/Tools
 License  : Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear GPL-2.0 JasPer-2.0 LGPL-2.1 Libpng libtiff
 Requires: compat-opencv-soname33-bin = %{version}-%{release}
@@ -17,7 +17,6 @@ Requires: compat-opencv-soname33-lib = %{version}-%{release}
 Requires: compat-opencv-soname33-license = %{version}-%{release}
 Requires: compat-opencv-soname33-python = %{version}-%{release}
 Requires: compat-opencv-soname33-python3 = %{version}-%{release}
-BuildRequires : beignet-dev
 BuildRequires : buildreq-cmake
 BuildRequires : ccache
 BuildRequires : cmake
@@ -36,6 +35,7 @@ BuildRequires : mesa-dev
 BuildRequires : numpy
 BuildRequires : ocl-icd-dev
 BuildRequires : openblas
+BuildRequires : opencl-headers-dev
 BuildRequires : openjdk9-dev
 BuildRequires : pkg-config
 BuildRequires : pkgconfig(clp)
@@ -55,12 +55,8 @@ Patch5: CVE-2018-5269-1.patch
 Patch6: CVE-2018-5269-2.patch
 
 %description
-A demo of the Java wrapper for OpenCV with two examples:
-1) feature detection and matching and
-2) face detection.
-The examples are coded in Scala and Java.
-Anyone familiar with Java should be able to read the Scala examples.
-Please feel free to contribute code examples in Scala or Java, or any JVM language.
+The Independent JPEG Group's JPEG software
+==========================================
 
 %package bin
 Summary: bin components for the compat-opencv-soname33 package.
@@ -142,8 +138,8 @@ python3 components for the compat-opencv-soname33 package.
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1560295247
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1564438966
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -174,7 +170,7 @@ make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1560295247
+export SOURCE_DATE_EPOCH=1564438966
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-opencv-soname33
 cp 3rdparty/cpufeatures/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_cpufeatures_LICENSE
