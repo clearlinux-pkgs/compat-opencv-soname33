@@ -16,6 +16,5 @@ restrict.patch
 CVE-2017-17760.patch
 CVE-2017-18009.patch
 CVE-2018-5268.patch
-CVE-2018-5269-1.patch
-CVE-2018-5269-2.patch
+CVE-2018-5269.patch
 

@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : compat-opencv-soname33
 Version  : 3.3.1
-Release  : 64
+Release  : 65
 URL      : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Source0  : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Summary  : Open Source Computer Vision Library
@@ -52,8 +52,7 @@ Patch1: restrict.patch
 Patch2: CVE-2017-17760.patch
 Patch3: CVE-2017-18009.patch
 Patch4: CVE-2018-5268.patch
-Patch5: CVE-2018-5269-1.patch
-Patch6: CVE-2018-5269-2.patch
+Patch5: CVE-2018-5269.patch
 
 %description
 A demo of the Java wrapper for OpenCV with two examples:
@@ -114,14 +113,13 @@ python3 components for the compat-opencv-soname33 package.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1565226592
+export SOURCE_DATE_EPOCH=1567034475
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -152,7 +150,7 @@ make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1565226592
+export SOURCE_DATE_EPOCH=1567034475
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-opencv-soname33
 cp 3rdparty/cpufeatures/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_cpufeatures_LICENSE
