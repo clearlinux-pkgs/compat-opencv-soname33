@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : compat-opencv-soname33
 Version  : 3.3.1
-Release  : 65
+Release  : 66
 URL      : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Source0  : https://github.com/opencv/opencv/archive/3.3.1.tar.gz
 Summary  : Open Source Computer Vision Library
@@ -17,6 +17,7 @@ Requires: compat-opencv-soname33-license = %{version}-%{release}
 Requires: compat-opencv-soname33-python = %{version}-%{release}
 Requires: compat-opencv-soname33-python3 = %{version}-%{release}
 BuildRequires : apache-ant
+BuildRequires : apache-maven
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-mvn
 BuildRequires : ccache
@@ -48,6 +49,8 @@ BuildRequires : python3-dev
 BuildRequires : tbb-dev
 BuildRequires : v4l-utils-dev
 BuildRequires : zlib-dev
+# Suppress generation of debuginfo
+%global debug_package %{nil}
 Patch1: restrict.patch
 Patch2: CVE-2017-17760.patch
 Patch3: CVE-2017-18009.patch
@@ -119,7 +122,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1567034475
+export SOURCE_DATE_EPOCH=1567830644
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -150,7 +153,7 @@ make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1567034475
+export SOURCE_DATE_EPOCH=1567830644
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-opencv-soname33
 cp 3rdparty/cpufeatures/LICENSE %{buildroot}/usr/share/package-licenses/compat-opencv-soname33/3rdparty_cpufeatures_LICENSE
